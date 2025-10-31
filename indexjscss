@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Calculator | Hacktoberfest 2025</title>
+
+  <!-- ===============================
+       🌟 Hacktoberfest 2025 Project
+       Title: Smart Dual Theme Calculator
+       Author: Open Source Contributor (You!)
+       Description:
+         A modern, dual-theme (light & dark) scientific calculator 
+         made using HTML, CSS, and JavaScript. 
+         Features keyboard support and advanced operations.
+       =============================== -->
+
+  <style>
+    /* --------------------------------------------------
+       Smart Calculator | Hacktoberfest 2025
+       Designed for Open Source Contribution ❤️
+    -------------------------------------------------- */
+
+    :root {
+      --bg: #f7f7f7;
+      --text: #222;
+      --btn: #e0e0e0;
+      --btn-hover: #d0d0d0;
+      --accent: #00aaff;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #fff;
+      --btn: #1e1e1e;
+      --btn-hover: #333;
+      --accent: #ffb300;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.4s;
+    }
+
+    .container {
+      width: 360px;
+      background: var(--bg);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.3rem;
+    }
+
+    #theme-toggle {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    #theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .display {
+      background: var(--btn);
+      border-radius: 10px;
+      text-align: right;
+      padding: 20px;
+      font-size: 2rem;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn {
+      background: var(--btn);
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--btn-hover);
+      transform: scale(1.05);
+    }
+
+    .eq {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .eq:hover {
+      background: #008ecc;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    footer b {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Smart Calculator ⚡</h1>
+      <button id="theme-toggle">🌙</button>
+    </header>
+
+    <div class="calculator">
+      <div id="display" class="display">0</div>
+
+      <div class="keys">
+        <button class="btn fn" data-action="clear">C</button>
+        <button class="btn fn" data-action="back">⌫</button>
+        <button class="btn fn" data-fn="sqrt">√</button>
+        <button class="btn op" data-op="/">÷</button>
+
+        <button class="btn" data-digit="7">7</button>
+        <button class="btn" data-digit="8">8</button>
+        <button class="btn" data-digit="9">9</button>
+        <button class="btn op" data-op="*">×</button>
+
+        <button class="btn" data-digit="4">4</button>
+        <button class="btn" data-digit="5">5</button>
+        <button class="btn" data-digit="6">6</button>
+        <button class="btn op" data-op="-">−</button>
+
+        <button class="btn" data-digit="1">1</button>
+        <button class="btn" data-digit="2">2</button>
+        <button class="btn" data-digit="3">3</button>
+        <button class="btn op" data-op="+">+</button>
+
+        <button class="btn fn" data-fn="square">x²</button>
+        <button class="btn" data-digit="0">0</button>
+        <button class="btn" data-digit=".">.</button>
+        <button class="btn eq" data-action="equals">=</button>
+
+        <button class="btn fn" data-fn="cube">x³</button>
+        <button class="btn fn" data-fn="percent">%</button>
+        <button class="btn fn" data-fn="sin">sin</button>
+        <button class="btn fn" data-fn="cos">cos</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>💡 Made with ❤️ for <b>Hacktoberfest 2025</b></p>
+    </footer>
+  </div>
+
+  <script>
+    // ------------------------------------------------------
+    // Smart Calculator | Hacktoberfest 2025
+    // Developed by Open Source Contributors 💻
+    // ------------------------------------------------------
+
+    const display = document.getElementById("display");
+    const themeToggle = document.getElementById("theme-toggle");
+    let currentInput = "";
+
+    // Append numbers and operators
+    document.querySelectorAll("[data-digit]").forEach(btn =>
+      btn.addEventListener("click", () => appendToDisplay(btn.dataset.digit))
+    );
+
+    document.querySelectorAll("[data-op]").forEach(btn =>
+      btn.addEventListener("click", () => appendToDisplay(btn.dataset.op))
+    );
+
+    // Handle clear, backspace, equals
+    document.querySelectorAll("[data-action]").forEach(btn =>
+      btn.addEventListener("click", () => handleAction(btn.dataset.action))
+    );
+
+    // Handle functions like sin, cos, etc.
+    document.querySelectorAll("[data-fn]").forEach(btn =>
+      btn.addEventListener("click", () => handleFunction(btn.dataset.fn))
+    );
+
+    function appendToDisplay(value) {
+      if (display.textContent === "0" && value !== ".") display.textContent = "";
+      display.textContent += value;
+      currentInput = display.textContent;
+    }
+
+    function handleAction(action) {
+      if (action === "clear") {
+        display.textContent = "0";
+        currentInput = "";
+      } else if (action === "back") {
+        display.textContent = display.textContent.slice(0, -1) || "0";
+        currentInput = display.textContent;
+      } else if (action === "equals") {
+        try {
+          let result = eval(currentInput);
+          display.textContent = result % 1 === 0 ? result : result.toFixed(4);
+        } catch {
+          display.textContent = "Error";
+        }
+      }
+    }
+
+    function handleFunction(fn) {
+      try {
+        let val = parseFloat(display.textContent);
+        switch (fn) {
+          case "sqrt": display.textContent = Math.sqrt(val).toFixed(4); break;
+          case "square": display.textContent = Math.pow(val, 2); break;
+          case "cube": display.textContent = Math.pow(val, 3); break;
+          case "sin": display.textContent = Math.sin(val * Math.PI / 180).toFixed(4); break;
+          case "cos": display.textContent = Math.cos(val * Math.PI / 180).toFixed(4); break;
+          case "percent": display.textContent = val / 100; break;
+        }
+      } catch {
+        display.textContent = "Error";
+      }
+    }
+
+    // Theme toggle
+    themeToggle.addEventListener("click", () => {
+      if (document.body.getAttribute("data-theme") === "dark") {
+        document.body.removeAttribute("data-theme");
+        themeToggle.textContent = "🌙";
+      } else {
+        document.body.setAttribute("data-theme", "dark");
+        themeToggle.textContent = "☀️";
+      }
+    });
+
+    // Keyboard support
+    document.addEventListener("keydown", e => {
+      if (!isNaN(e.key) || ["+", "-", "*", "/", "."].includes(e.key))
+        appendToDisplay(e.key);
+      else if (e.key === "Enter") handleAction("equals");
+      else if (e.key === "Backspace") handleAction("back");
+      else if (e.key === "Escape") handleAction("clear");
+    });
+  </script>
+
+  <!-- ===============================
+       📘 README SECTION
+       ===============================
+       # Smart Calculator - Hacktoberfest 2025
+
+       ## 🧮 About
+       A dual-theme calculator (light & dark) with modern UI and
+       scientific operations (sin, cos, sqrt, powers, percent).
+
+       ## 🧰 Tech Stack
+       - HTML5
+       - CSS3 (Custom variables for themes)
+       - Vanilla JavaScript
+
+       ## ⚙️ Features
+       - Dual theme (🌙 / ☀️)
+       - Keyboard support
+       - Smooth animations
+       - Responsive layout
+       - Beginner-friendly
+
+       ## 🚀 How to Run
+       1. Save this file as Smart_Calculator_Hacktoberfest2025.html
+       2. Open it in your web browser
+       3. Start calculating!
+
+       ## 🤝 Contribution
+       Fork → Create Branch → Add Feature → Commit → Push → PR
+
+       ## 🏆 Hacktoberfest 2025 Goal
+       Build, learn, and share open source knowledge 💻
+  -->
+</body>
+</html>
